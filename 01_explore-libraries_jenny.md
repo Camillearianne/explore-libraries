@@ -1,11 +1,27 @@
 01\_explore-libraries\_jenny.R
 ================
 Camille
-Wed Jan 31 17:05:28 2018
+Wed Jan 31 17:36:07 2018
 
 ``` r
 ## how jenny might do this in a first exploration
 ## purposely leaving a few things to change later!
+library(tidyverse)
+```
+
+    ## -- Attaching packages ------------------------------------------------------ tidyverse 1.2.1 --
+
+    ## v ggplot2 2.2.1     v purrr   0.2.4
+    ## v tibble  1.4.2     v dplyr   0.7.4
+    ## v tidyr   0.7.2     v stringr 1.2.0
+    ## v readr   1.1.1     v forcats 0.2.0
+
+    ## -- Conflicts --------------------------------------------------------- tidyverse_conflicts() --
+    ## x dplyr::filter() masks stats::filter()
+    ## x dplyr::lag()    masks stats::lag()
+
+``` r
+library(fs)
 ```
 
 Which libraries does R search for packages?
@@ -25,28 +41,12 @@ Which libraries does R search for packages?
     ## [1] "C:/PROGRA~1/R/R-34~1.3/library"
 
 ``` r
-library(fs)
 path_real(.Library)
 ```
 
     ## C:/Program Files/R/R-3.4.3/library
 
 Installed packages
-
-``` r
-library(tidyverse)
-```
-
-    ## -- Attaching packages ------------------------------------------------------ tidyverse 1.2.1 --
-
-    ## v ggplot2 2.2.1     v purrr   0.2.4
-    ## v tibble  1.4.2     v dplyr   0.7.4
-    ## v tidyr   0.7.2     v stringr 1.2.0
-    ## v readr   1.1.1     v forcats 0.2.0
-
-    ## -- Conflicts --------------------------------------------------------- tidyverse_conflicts() --
-    ## x dplyr::filter() masks stats::filter()
-    ## x dplyr::lag()    masks stats::lag()
 
 ``` r
 ipt <- installed.packages() %>%
@@ -56,7 +56,7 @@ ipt <- installed.packages() %>%
 nrow(ipt)
 ```
 
-    ## [1] 124
+    ## [1] 126
 
 Exploring the packages
 
@@ -73,7 +73,7 @@ ipt %>%
     ## 1 C:/Program Files/R/R-3.4.3/library           base           14
     ## 2 C:/Program Files/R/R-3.4.3/library           recommended    15
     ## 3 C:/Program Files/R/R-3.4.3/library           <NA>            1
-    ## 4 C:/Users/Camille/Documents/R/win-library/3.4 <NA>           94
+    ## 4 C:/Users/Camille/Documents/R/win-library/3.4 <NA>           96
 
 ``` r
 ##   * what proportion need compilation?
@@ -85,23 +85,25 @@ ipt %>%
     ## # A tibble: 3 x 3
     ##   NeedsCompilation     n   prop
     ##   <chr>            <int>  <dbl>
-    ## 1 no                  54 0.435 
-    ## 2 yes                 64 0.516 
-    ## 3 <NA>                 6 0.0484
+    ## 1 no                  55 0.437 
+    ## 2 yes                 65 0.516 
+    ## 3 <NA>                 6 0.0476
 
 ``` r
 ##   * how break down re: version of R they were built on
-ipt %>%
+built_props <- ipt %>%
   count(Built) %>%
   mutate(prop = n / sum(n))
+
+##Compare proportions visually
+ggplot(built_props)+
+  geom_bar(mapping = aes(x = Built, y = prop), stat = "identity")+
+  xlab("R Version")+
+  ylab("Proportion (%)")+
+  ggtitle("R Version Breakdown")
 ```
 
-    ## # A tibble: 3 x 3
-    ##   Built     n    prop
-    ##   <chr> <int>   <dbl>
-    ## 1 3.4.1    10 0.0806 
-    ## 2 3.4.2     1 0.00806
-    ## 3 3.4.3   113 0.911
+![](01_explore-libraries_jenny_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
 Reflections
 
@@ -141,5 +143,95 @@ ipt2 %>%
     ## # A tibble: 2 x 3
     ##   github     n  prop
     ##   <lgl>  <int> <dbl>
-    ## 1 F         56 0.452
-    ## 2 T         68 0.548
+    ## 1 F         56 0.444
+    ## 2 T         70 0.556
+
+``` r
+devtools::session_info()
+```
+
+    ## Session info -------------------------------------------------------------
+
+    ##  setting  value                       
+    ##  version  R version 3.4.3 (2017-11-30)
+    ##  system   x86_64, mingw32             
+    ##  ui       RTerm                       
+    ##  language (EN)                        
+    ##  collate  English_United States.1252  
+    ##  tz       America/New_York            
+    ##  date     2018-01-31
+
+    ## Packages -----------------------------------------------------------------
+
+    ##  package    * version date       source        
+    ##  assertthat   0.2.0   2017-04-11 CRAN (R 3.4.3)
+    ##  backports    1.1.2   2017-12-13 CRAN (R 3.4.3)
+    ##  base       * 3.4.3   2017-12-06 local         
+    ##  bindr        0.1     2016-11-13 CRAN (R 3.4.3)
+    ##  bindrcpp   * 0.2     2017-06-17 CRAN (R 3.4.3)
+    ##  broom        0.4.3   2017-11-20 CRAN (R 3.4.3)
+    ##  cellranger   1.1.0   2016-07-27 CRAN (R 3.4.3)
+    ##  cli          1.0.0   2017-11-05 CRAN (R 3.4.3)
+    ##  colorspace   1.3-2   2016-12-14 CRAN (R 3.4.3)
+    ##  compiler     3.4.3   2017-12-06 local         
+    ##  crayon       1.3.4   2017-09-16 CRAN (R 3.4.3)
+    ##  datasets   * 3.4.3   2017-12-06 local         
+    ##  devtools     1.13.4  2017-11-09 CRAN (R 3.4.3)
+    ##  digest       0.6.14  2018-01-14 CRAN (R 3.4.3)
+    ##  dplyr      * 0.7.4   2017-09-28 CRAN (R 3.4.3)
+    ##  evaluate     0.10.1  2017-06-24 CRAN (R 3.4.3)
+    ##  forcats    * 0.2.0   2017-01-23 CRAN (R 3.4.3)
+    ##  foreign      0.8-69  2017-06-22 CRAN (R 3.4.3)
+    ##  fs         * 1.1.0   2018-01-26 CRAN (R 3.4.3)
+    ##  ggplot2    * 2.2.1   2016-12-30 CRAN (R 3.4.3)
+    ##  glue         1.2.0   2017-10-29 CRAN (R 3.4.3)
+    ##  graphics   * 3.4.3   2017-12-06 local         
+    ##  grDevices  * 3.4.3   2017-12-06 local         
+    ##  grid         3.4.3   2017-12-06 local         
+    ##  gtable       0.2.0   2016-02-26 CRAN (R 3.4.3)
+    ##  haven        1.1.1   2018-01-18 CRAN (R 3.4.3)
+    ##  hms          0.4.1   2018-01-24 CRAN (R 3.4.3)
+    ##  htmltools    0.3.6   2017-04-28 CRAN (R 3.4.3)
+    ##  httr         1.3.1   2017-08-20 CRAN (R 3.4.3)
+    ##  jsonlite     1.5     2017-06-01 CRAN (R 3.4.3)
+    ##  knitr        1.18    2017-12-27 CRAN (R 3.4.3)
+    ##  labeling     0.3     2014-08-23 CRAN (R 3.4.1)
+    ##  lattice      0.20-35 2017-03-25 CRAN (R 3.4.3)
+    ##  lazyeval     0.2.1   2017-10-29 CRAN (R 3.4.3)
+    ##  lubridate    1.7.1   2017-11-03 CRAN (R 3.4.3)
+    ##  magrittr     1.5     2014-11-22 CRAN (R 3.4.3)
+    ##  memoise      1.1.0   2017-04-21 CRAN (R 3.4.3)
+    ##  methods    * 3.4.3   2017-12-06 local         
+    ##  mnormt       1.5-5   2016-10-15 CRAN (R 3.4.1)
+    ##  modelr       0.1.1   2017-07-24 CRAN (R 3.4.3)
+    ##  munsell      0.4.3   2016-02-13 CRAN (R 3.4.3)
+    ##  nlme         3.1-131 2017-02-06 CRAN (R 3.4.3)
+    ##  parallel     3.4.3   2017-12-06 local         
+    ##  pillar       1.1.0   2018-01-14 CRAN (R 3.4.3)
+    ##  pkgconfig    2.0.1   2017-03-21 CRAN (R 3.4.3)
+    ##  plyr         1.8.4   2016-06-08 CRAN (R 3.4.3)
+    ##  psych        1.7.8   2017-09-09 CRAN (R 3.4.3)
+    ##  purrr      * 0.2.4   2017-10-18 CRAN (R 3.4.3)
+    ##  R6           2.2.2   2017-06-17 CRAN (R 3.4.3)
+    ##  Rcpp         0.12.14 2017-11-23 CRAN (R 3.4.3)
+    ##  readr      * 1.1.1   2017-05-16 CRAN (R 3.4.3)
+    ##  readxl       1.0.0   2017-04-18 CRAN (R 3.4.3)
+    ##  reshape2     1.4.3   2017-12-11 CRAN (R 3.4.3)
+    ##  rlang        0.1.6   2017-12-21 CRAN (R 3.4.3)
+    ##  rmarkdown    1.8     2017-11-17 CRAN (R 3.4.3)
+    ##  rprojroot    1.3-2   2018-01-03 CRAN (R 3.4.3)
+    ##  rstudioapi   0.7     2017-09-07 CRAN (R 3.4.3)
+    ##  rvest        0.3.2   2016-06-17 CRAN (R 3.4.3)
+    ##  scales       0.5.0   2017-08-24 CRAN (R 3.4.3)
+    ##  stats      * 3.4.3   2017-12-06 local         
+    ##  stringi      1.1.6   2017-11-17 CRAN (R 3.4.2)
+    ##  stringr    * 1.2.0   2017-02-18 CRAN (R 3.4.3)
+    ##  tibble     * 1.4.2   2018-01-22 CRAN (R 3.4.3)
+    ##  tidyr      * 0.7.2   2017-10-16 CRAN (R 3.4.3)
+    ##  tidyverse  * 1.2.1   2017-11-14 CRAN (R 3.4.3)
+    ##  tools        3.4.3   2017-12-06 local         
+    ##  utf8         1.1.3   2018-01-03 CRAN (R 3.4.3)
+    ##  utils      * 3.4.3   2017-12-06 local         
+    ##  withr        2.1.1   2017-12-19 CRAN (R 3.4.3)
+    ##  xml2         1.2.0   2018-01-24 CRAN (R 3.4.3)
+    ##  yaml         2.1.16  2017-12-12 CRAN (R 3.4.3)

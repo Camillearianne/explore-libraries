@@ -1,20 +1,21 @@
 #' ---
-#' output: word_document
+#' output: github_document
 #' ---
 
 ## how jenny might do this in a first exploration
 ## purposely leaving a few things to change later!
-
+library(tidyverse)
+library(fs)
 #' Which libraries does R search for packages?
 .libPaths()
 
 ## let's confirm the second element is, in fact, the default library
 .Library
-library(fs)
+
 path_real(.Library)
 
 #' Installed packages
-library(tidyverse)
+
 ipt <- installed.packages() %>%
   as_tibble()
 
@@ -34,9 +35,16 @@ ipt %>%
   mutate(prop = n / sum(n))
 
 ##   * how break down re: version of R they were built on
-ipt %>%
+built_props <- ipt %>%
   count(Built) %>%
   mutate(prop = n / sum(n))
+
+##Compare proportions visually
+ggplot(built_props)+
+  geom_bar(mapping = aes(x = Built, y = prop), stat = "identity")+
+  xlab("R Version")+
+  ylab("Proportion (%)")+
+  ggtitle("R Version Breakdown")
 
 #' Reflections
 
@@ -65,3 +73,5 @@ ipt2 %>%
   mutate(github = grepl("github", URL)) %>%
   count(github) %>%
   mutate(prop = n / sum(n))
+
+devtools::session_info()
