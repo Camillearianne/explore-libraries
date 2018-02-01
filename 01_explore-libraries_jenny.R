@@ -75,3 +75,5 @@ ipt2 %>%
   mutate(prop = n / sum(n))
 
 devtools::session_info()
+
+##I had coffee
